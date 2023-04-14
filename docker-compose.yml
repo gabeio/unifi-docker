@@ -1,4 +1,3 @@
-version: '2.3'
 services:
   mongo:
     image: mongo:3.6
@@ -10,9 +9,11 @@ services:
       - db:/data/db
       - dbcfg:/data/configdb
   controller:
-    image: "jacobalberty/unifi:${TAG:-latest}"
+    image: unifi
     container_name: ${COMPOSE_PROJECT_NAME}_controller
     depends_on:
+      - mongo
+    links:
       - mongo
     init: true
     networks:
@@ -34,6 +35,7 @@ services:
       DB_URI: mongodb://mongo/unifi
       STATDB_URI: mongodb://mongo/unifi_stat
       DB_NAME: unifi
+      UNIFI_STDOUT: true
     ports:
       - "3478:3478/udp" # STUN
       - "6789:6789/tcp" # Speed test
